@@ -30,9 +30,12 @@ function signup(req, res, body) {
       return sendResponse(res, 409, 'User ID already exists');
     }
 
-    // Save to Auth.csv (plain text)
-    addCredential(email, password);
-
+    try {
+      addCredential(email, password);
+    } catch (err) {
+      console.error("Failed to write to Auth.csv:", err);
+      return sendResponse(res, 500, "Internal error writing auth credentials");
+    }
     // Save to User.csv
     const newUser = { id, name, email, phone, dept_id };
     users.push(newUser);
