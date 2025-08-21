@@ -1,19 +1,24 @@
 const http = require('http');
 const userRouter = require('./routes/userRoutes');
 const authRouter = require('./routes/authRoutes');
+const { getOrgChart } = require('./controllers/userController')
 
 const server = http.createServer((req, res) => {
   // CORS support for frontend
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+
   if (req.method === 'OPTIONS') {
     res.writeHead(204);
     res.end();
     return;
   }
 
-  if (req.url.startsWith('/users')) {
+  // Ensure JSON response format for API
+  if (req.url.startsWith('/users/org-chart') && req.method === 'GET') {
+    return getOrgChart(req, res);
+  } else if (req.url.startsWith('/users')) {
     userRouter(req, res);
   } else if (req.url.startsWith('/auth')) {
     authRouter(req, res);
